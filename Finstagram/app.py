@@ -147,7 +147,7 @@ def loginAuth():
         err = "Incorrect username or password."
         return render_template("login.html", err=err)
 
-    err = "Unknown error occured pleas try again."
+    err = "Error has occured.Please try again"
     return render_template("login.html", err=err)
 
 
@@ -178,7 +178,7 @@ def registerAuth():
 
         return redirect(url_for("login"))
 
-    err = "An error has occurred. Please try again."
+    err = "Error has occured. Please try again"
     return render_template("register.html", err=err)
 
 # home page----------------------------------------------------------------------------
@@ -187,10 +187,12 @@ def registerAuth():
 @login_required
 def home():
     username=session["username"]
-    query="SELECT * FROM PERSON WHERE username=%s"
+
+    query="SELECT Bio FROM PERSON WHERE username=%s"
     query2=runQuery(query,"one",(username))
 
-    return render_template("home.html", username=username,bio=query2["bio"])
+    #return render_template("home.html", username=username,bio=query2["bio"])
+    return render_template("home.html", username=username,bio=query2)
 
 
 
@@ -308,14 +310,14 @@ def upload_image():
 
                 query = "INSERT INTO Share VALUES ( %s, %s, %s )"
                 runQuery( query, None, ( groupOwner[ 0 ], groupOwner[ 1 ], pId ) )
-            text = "Image has successfully uploaded with Friendgroup"
+            text = "Image has been succesfully loaded to Friendgroup"
         #image was scuessfuly upladed
         else:
             text = "Image was uploaded"
         return render_template("upload.html", text=text)
     #
     except:
-        text = "Failed to upload image"
+        text = "Failed image upload"
         return render_template("upload.html", text=text)
 
 
@@ -385,7 +387,7 @@ def followAuth( ):
         #grab the single person
         info = runQuery( query, "one", followeeUname )
         if not info:
-            err = "%s user does not exist" %( followeeUname )
+            err = "%s does not exist" %( followeeUname )
             return redirect( url_for( "follow", err = err ) )
 
         #add into follows
@@ -393,9 +395,9 @@ def followAuth( ):
             query = "INSERT INTO Follow VALUES( %s, %s, %s )"
             runQuery( query, None, ( followerUname, followeeUname, False ) )
             #success request has been sent
-            err = "Request to %s has been sent :)" %( followeeUname )
+            err = "Request to %s has been sent" %( followeeUname )
         except pymysql.err.Integrityerr:
-            err = "Request has been sent or you already follow this person %s" %( followeeUname )
+            err = "Request sent or you already already follow %s" %( followeeUname )
         return redirect( url_for( "follow", err = err ) )
     else:
         #both things failed so um its all my fault (programmer )
@@ -416,16 +418,16 @@ def tagUser( ):
 
 
         #grab photo id of owner
-        pID = request.args.get( "photoID" )
+        pId = request.args.get( "photoID" )
         query = "SELECT photoOwner FROM photo WHERE photoID = %s"
-        photoOwner = runQuery( query, "one", pID )[ "photoOwner" ]
+        photoOwner = runQuery( query, "one", pId )[ "photoOwner" ]
 
 
         #Check to see if request has been sent or accepted
         query = "SELECT * FROM tag WHERE photoID = %s AND username = %s"
         info = runQuery( query, "one", ( pId, tagUser ) )
         if info:
-            err = "tag request to  %s has already been sent or they are already tagged" %( tagUser )
+            err = "tag request to  %s has been sent or already tagged" %( tagUser )
             return redirect( url_for( "images", err = err ) )
 
         #if we are tagged the user then we add to the table
@@ -433,7 +435,7 @@ def tagUser( ):
         if tagUser == session[ "username" ]:
             query = "INSERT INTO Tag VALUES( %s, %s, True )"
             runQuery( query, None, ( tagUser, pId ) )
-            err = "You have successfullytagged this person %s" %( tagUser )
+            err = "successfully tagged %s" %( tagUser )
             return redirect( url_for( "images", err = err ) )
 
 
@@ -453,7 +455,7 @@ def tagUser( ):
 
                 #err cant tag because you dont follow
                 if not info:
-                    err = "You cant tag %s you do not follow them%s" \
+                    err = "Cant tag %s you do not follow  %s" \
                             %( tagUser, photoOwner )
                     return redirect( url_for( "images", err = err ) )
 
@@ -463,13 +465,11 @@ def tagUser( ):
                 query = "SELECT * FROM belong AS b1 JOIN belong AS b2 USING( groupName, groupOwner ) WHERE b1.username = %s AND b2.username = %s"
                 info = runQuery( query, "one", ( tagUser, photoOwner ) )
 
-                # ##tagged User isnt a follower return an err
-                # if not info:
-                #     err = "you cannot tag %s as they are not in the same Friendgroup as you\
-                #             as %s" %( tagUser, photoOwner )
-                #     return redirect( url_for( "images", err = err ) )
-
-
+                ##tagged User isnt a follower return an err
+                if not info:
+                    err = "you cannot tag %s as they are not in the Friendgroup\
+                            as %s" %( tagUser, photoOwner )
+                    return redirect( url_for( "images", err = err ) )
 
         # try inserting the tag into the tag table. if there is an err,
         # that means there already is a tagged request for the user
