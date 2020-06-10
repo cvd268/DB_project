@@ -1,0 +1,106 @@
+<!-- <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='images.css')}}" > -->
+
+<html>
+    <head>
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+      body{
+        background-color:#A030F2;
+      }
+
+      .vertical-menu {
+        width: 200px;
+      }
+
+      .vertical-menu a {
+        background-color: #eee;
+        color: black;
+        display: block;
+        padding: 12px;
+        text-decoration: none;
+      }
+
+      .vertical-menu a:hover {
+        background-color: #ccc;
+      }
+
+      .vertical-menu a.active {
+        background-color: #4CAF50;
+        color: white;
+      }
+      </style>
+        <title>Finstagram</title>
+    </head>
+    <body>
+        <h1>Image Gallery</h1>
+        {% if error %}
+            <div style="background-color:red">{{ error }}</div>
+        {% endif %}
+        <table style="width: 100%">
+        {#
+
+        For every PhotoId we have a corresponding followers
+        we get the filepath and iterate
+        #}
+            {% for photoID, data in images.items( ) %}
+                <tr>
+                    <td>
+                      <div>
+                        <a href="#" class="active"></a>
+
+                        <a href="#"><img src="/image/{{data['filePath']}}" width="200"/></a>
+                      </div>
+
+                    </td>
+                    <td>
+                        By: {{ data[ "name" ] }} ({{ data[ "photoOwner" ] }})
+                    </td>
+                    <td>
+                        Uploaded on: {{ data[ "timestamp" ] }}
+                    </td>
+                    <td>
+
+                        <i>Caption: {{ data[ "caption" ] }}</i>
+                    </td>
+                    <td>
+
+                        <form action="/tagUser?photoID={{photoID}}" method="POST">
+                            <input type="text" name="taggedUser" placeholder="Please enter who you want to tag">
+                            <input type="submit" value="Submit">
+                        </form>
+                    </td>
+                    <td><ul>
+
+
+                        Tagged:<br>
+                        {% for taggedUser in data[ "tags" ] %}
+                            {% if data[ "tags" ][ taggedUser ] %}
+                                <li>{{ taggedUser }}
+                                {% if taggedUser == data[ "currentUser" ] %}
+                                    <a href="/images?photoID={{photoID}}&option=rejectTag" stlye="color:red">
+                                        Delete Tag
+                                    </a>
+                                {% endif %}
+                                </li>
+                            {% else %}
+                                <li style="color:red">
+                                    Tag request sent.
+                                    Accept tag?
+                                    <br>
+                                    <a href="/images?photoID={{photoID}}&option=acceptTag" stlye="color:red">
+                                        Yes
+                                    </a> <br>
+                                    <a href="/images?photoID={{photoID}}&option=rejectTag" stlye="color:red">
+                                        No
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <a href="/">Go back</a>
+    </body>
+</html>
