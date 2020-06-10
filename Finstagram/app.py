@@ -188,7 +188,7 @@ def registerAuth():
 def home():
     username=session["username"]
 
-    query="SELECT Bio FROM PERSON WHERE username=%s"
+    query="SELECT bio FROM Person WHERE username=%s"
     query2=runQuery(query,"one",(username))
 
     #return render_template("home.html", username=username,bio=query2["bio"])
