@@ -1,0 +1,27 @@
+INSERT INTO `Person`(`username`, `password`, `fname`, `lname`, `bio`) VALUES ('abby','pass1','Abby','Lee','Dance Moms Leader');
+INSERT INTO `Person`(`username`, `password`, `fname`, `lname`, `bio`) VALUES ('bobby','pass2','Bobby','Brown','Abbys Partner');
+INSERT INTO `Person`(`username`, `password`, `fname`, `lname`, `bio`) VALUES ('colieen','pass3','Colieen','Douglas','Dance Mom');
+INSERT INTO `Person`(`username`, `password`, `fname`, `lname`, `bio`) VALUES ('dan','pass2','Dan','Sucio','dirty dan');
+
+INSERT INTO `Friendgroup`(`groupOwner`, `groupName`) VALUES ('abby','family');
+INSERT INTO `Friendgroup`(`groupOwner`, `groupName`) VALUES ('abby','roommates');
+
+INSERT INTO `Friendgroup`(`groupOwner`, `groupName`) VALUES ('bobby','roommates');
+INSERT INTO `Friendgroup`(`groupOwner`, `groupName`) VALUES ('bobby','bowlingTeam');
+
+INSERT INTO `Photo`(`timestamp`, `filepath`, `allFollowers`, `caption`, `photoOwner`) VALUES (CURDATE(),'./roommates_b.jpg',True,'roommates','bobby');
+INSERT INTO `Photo`(`timestamp`, `filepath`, `allFollowers`, `caption`, `photoOwner`) VALUES (CURDATE(),'./roommates_a.jpg',True,'roommates','abby');
+INSERT INTO `Photo`(`timestamp`, `filepath`, `allFollowers`, `caption`, `photoOwner`) VALUES (CURDATE(),'./bowling_team.jpg',False,'bowlingTeam','bobby');
+INSERT INTO `Photo`(`timestamp`, `filepath`, `allFollowers`, `caption`, `photoOwner`) VALUES (CURDATE(),'./family_bora_bora.jpg',False,'family vaca','abby');
+
+
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('colieen','abby','roommates');
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('abby','abby','roommates');
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('dan','abby','family');
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('abby','abby','family');
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('dan','bobby','roommates');
+INSERT INTO `Belong`(`username`, `groupOwner`, `groupName`) VALUES ('bobby','bobby','roommates');
+
+
+INSERT INTO `Follow`(`followeeUname`, `followerUname`, `acceptedfollow`) VALUES ('bobby','abby',True);
+INSERT INTO `Follow`(`followeeUname`, `followerUname`, `acceptedfollow`) VALUES ('bobby','colieen',False);
